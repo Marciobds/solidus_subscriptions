@@ -8,13 +8,21 @@ module SolidusSubscriptions
 
         def create
           store = params[:store_id].nil? ? ::Spree::Store.default : ::Spree::Store.find(id: params[:store_id])
-          attributes = subscription_params.merge(user: current_api_user, store: store)
-          subscription = SolidusSubscriptions::Subscription.new(attributes)
+          attributes = create_subscription_params.merge(user: current_api_user, store: store)
+          payment_source_type = attributes[:payment_source_type]
 
-          if subscription.save
-            render json: subscription.to_json(include: [:line_items, :shipping_address, :billing_address])
+          if payment_source_type.blank? || valid_payment_source_type?(payment_source_type)
+            subscription = SolidusSubscriptions::Subscription.new(attributes)
+
+            if subscription.save
+              render json: subscription.to_json(include: [:line_items, :shipping_address, :billing_address])
+            else
+              render json: subscription.errors.to_json, status: :unprocessable_entity
+            end
           else
-            render json: subscription.errors.to_json, status: :unprocessable_entity
+            error_message = I18n.t('solidus_subscriptions.subscription.invalid_payment_source_type')
+
+            render json: { payment_source_type: [error_message] }.to_json, status: :unprocessable_entity
           end
         end
 
@@ -55,6 +63,14 @@ module SolidusSubscriptions
           authorize! action_name.to_sym, @subscription, subscription_guest_token
         end
 
+        def create_subscription_params
+          params.require(:subscription).permit(
+            %i[payment_source_type payment_source_id payment_method_id shipping_address_id billing_address_id] |
+              SolidusSubscriptions.configuration.subscription_attributes |
+              [line_items_attributes: line_item_attributes]
+          )
+        end
+
         def subscription_params
           params.require(:subscription).permit(SolidusSubscriptions.configuration.subscription_attributes | [
             line_items_attributes: line_item_attributes,
@@ -63,6 +79,10 @@ module SolidusSubscriptions
 
         def line_item_attributes
           SolidusSubscriptions.configuration.subscription_line_item_attributes - [:subscribable_id] + [:id]
+        end
+
+        def valid_payment_source_type?(payment_source_type)
+          ActiveSupport::Inflector.safe_constantize(payment_source_type)&.method_defined? :payment_method
         end
       end
     end

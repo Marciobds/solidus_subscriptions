@@ -35,6 +35,48 @@ RSpec.describe '/api/v1/subscriptions' do
         expect(response.status).to eq(422)
       end
     end
+
+    context 'when valid payment attributes are provided' do
+      # rubocop:disable RSpec/MultipleExpectations
+      it 'creates the subscription using the specified payment' do
+        user = create(:user, &:generate_spree_api_key!)
+        payment_source = create(:credit_card)
+        payment_source_params = { payment_source_type: payment_source.class.to_s, payment_source_id: payment_source.id }
+
+        expect(user.wallet.default_wallet_payment_source).to be_nil
+        expect do
+          post(
+            api_v1_subscriptions_path,
+            params: { subscription: { interval_length: 7 }.merge(payment_source_params) },
+            headers: { 'Authorization' => "Bearer #{user.spree_api_key}" },
+          )
+        end.to change(SolidusSubscriptions::Subscription, :count).from(0).to(1)
+        expect(SolidusSubscriptions::Subscription.last).to have_attributes(payment_source_params)
+      end
+      # rubocop:enable RSpec/MultipleExpectations
+    end
+
+    context 'when an invalid payment source class is provided' do
+      # rubocop:disable RSpec/MultipleExpectations
+      it "doesn't create the subscription and responds with 422 Unprocessable Entity" do
+        user = create(:user, &:generate_spree_api_key!)
+        payment_source_params = { payment_source_type: 'invalid class', payment_source_id: 1 }
+
+        expect do
+          post(
+            api_v1_subscriptions_path,
+            params: { subscription: { interval_length: 7 }.merge(payment_source_params) },
+            headers: { 'Authorization' => "Bearer #{user.spree_api_key}" },
+          )
+        end.not_to change(SolidusSubscriptions::Subscription, :count)
+
+        error_message = I18n.t('solidus_subscriptions.subscription.invalid_payment_source_type')
+        response_body = JSON.parse(response.body)
+        expect(response_body).to eq('payment_source_type' => [error_message])
+        expect(response.status).to eq(422)
+      end
+      # rubocop:enable RSpec/MultipleExpectations
+    end
   end
 
   describe 'PATCH /:id' do
