@@ -1,0 +1,123 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+---
+pt-BR:
+  time:
+    formats:
+      human:
+  solidus_subscriptions:
+    subscription:
+      actionable_date: "Data Acionável"
+    installment_details:
+      out_of_stock: >
+        Esta parcela não pôde ser processada devido a insuficiente
+         estoque.
+      success: Esta parcela foi processada com sucesso!
+      failed: Esta parcela não pôde ser processada
+      payment_failed: O pagamento desta parcela falhou
+
+  spree:
+    new_subscription: Nova Assinatura
+    admin:
+      subscriptions:
+        successfully_canceled: Assinatura Cancelada!
+        successfully_activated: Assinatura Ativada!
+        successfully_skipped: Assinatura atrasada até %{date}
+        actions:
+          cancel: Cancelar
+          cancel_alert: "tem certeza que deseja cancelar essa assinatura?"
+          activate: Ativar
+          skip: Pular um
+        index:
+          new_subscription: Nova Assinatura
+        edit:
+          title: Detalhes
+          customer: Cliente
+          status: Status
+          fulfillment_status: Status de Preenchimento
+          revenue: Receita
+          interval: Intervalo
+          sidebar: Status
+          details: Detalhes
+          installments: Parcelas
+          events: Eventos
+          payment: Pagamento
+          orders: Pedidos
+        new:
+          back: Voltar para Lista de Assinaturas
+          title: Criar uma Assinatura
+        form:
+          subscription: Assinatura
+          subscription_line_items: Itens de linha de assinatura
+          title: Título
+      tab:
+        subscriptions: Assinaturas
+      installments:
+        index:
+          title: Installments
+      subscription_events:
+        index:
+          title: Eventos
+      subscription_orders:
+        index:
+          title: Pedidos
+      user:
+        subscriptions: Assinaturas
+    promotion_rule_types:
+      subscription_promotion_rule:
+        name: Assinatura
+        description: Pedido contem uma assinatura
+      subscription_order_promotion_rule:
+        name: Pedido de Assinatura
+        description: O pedido preenche uma assinatura
+
+    products:
+      cart_form:
+        quantity: Eu quero
+        quantity_suffix: itens
+        interval_length: cada
+        subscription_fields: Configurações da Assinatura
+
+  activerecord:
+    attributes:
+      solidus_subscriptions/line_item/interval_units:
+        day: Dias
+        week: Semanas
+        month: Meses
+        year: Anos
+      solidus_subscriptions/subscription/processing_state:
+        pending: novo
+        success: sucesso
+        failed: falha
+      solidus_subscriptions/line_item:
+        _destroy: Remover?
+      solidus_subscriptions/installment:
+        created_at: Data de criação
+        actionable_date: Data acionável
+        state: Estado
+      solidus_subscriptions/installment/state:
+        fulfilled: Realizada
+        unfulfilled: Não cumprido
+    models:
+      solidus_subscriptions/subscription:
+        one: Assinatura
+        other: Assinaturas
+      solidus_subscriptions/installment:
+        one: Parcela
+        other: Parcelas
+
+    errors:
+      models:
+        solidus_subscriptions/subscription:
+          attributes:
+            successive_skip_count:
+              exceeded: >
+                Esta assinatura excedeu o máximo configurado sucessivamente
+                limite de pular. Pode ser pulado novamente na próxima vez que for
+                processado.
+            skip_count:
+              exceeded: >
+                Esta assinatura excedeu o limite máximo configurado
+                limite. Não pode mais ser ignorado.
+            currency:
+              inclusion: "não é um código de moeda válido"
