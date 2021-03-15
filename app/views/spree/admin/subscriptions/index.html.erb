@@ -1,7 +1,7 @@
 <% admin_breadcrumb(plural_resource_name(SolidusSubscriptions::Subscription)) %>
 
 <% content_for :page_actions do %>
-  <li><%= link_to t('.new_subscription'), new_admin_subscription_path, class: 'btn btn-primary' %></li>
+  <li><%= link_to_with_icon 'plus', t('.new_subscription'), new_admin_subscription_path, class: 'btn btn-primary' %></li>
 <% end %>
 
 <% content_for :table_filter_title do %>

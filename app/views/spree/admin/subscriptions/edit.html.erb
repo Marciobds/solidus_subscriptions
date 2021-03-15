@@ -5,6 +5,10 @@
 <%= render 'spree/admin/shared/subscription_tabs', current: :details, subscription: @subscription %>
 <%= render 'spree/admin/shared/subscription_actions', subscription: @subscription %>
 
+<% content_for :page_actions do %>
+  <li><%= link_to_with_icon 'arrow-left', t("spree.back_to_subscriptions_list"), spree.admin_subscriptions_path, class: 'btn btn-primary' %></li>
+<% end %>
+
 <%= form_for @subscription, url: spree.admin_subscription_path(@subscription) do |f| %>
   <%= render "form", f: f %>
 <% end %>

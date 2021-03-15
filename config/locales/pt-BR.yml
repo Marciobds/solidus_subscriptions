@@ -18,6 +18,7 @@ pt-BR:
 
   spree:
     new_subscription: Nova Assinatura
+    back_to_subscriptions_list: Voltar para lista de Assinaturas
     admin:
       subscriptions:
         successfully_canceled: Assinatura Cancelada!
